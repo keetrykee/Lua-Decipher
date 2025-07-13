@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lua Decipher - Code Unveiler</title>
+    <title>Modern Tic-Tac-Toe</title>
     <style>
         * {
             margin: 0;
@@ -14,456 +14,918 @@
 
 ```
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-        color: #ffffff;
+        font-family: 'Arial', sans-serif;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        color: white;
         min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         overflow-x: hidden;
     }
 
-    .background-effects {
+    .container {
+        max-width: 500px;
+        width: 90%;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .title {
+        font-size: 2.5em;
+        font-weight: bold;
+        background: linear-gradient(135deg, #ffffff 0%, #888888 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+    }
+
+    .stats {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+    }
+
+    .stat {
+        text-align: center;
+    }
+
+    .stat-label {
+        font-size: 0.8em;
+        opacity: 0.7;
+    }
+
+    .stat-value {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #00ff88;
+    }
+
+    .navigation {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .nav-btn {
+        padding: 10px 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        border-radius: 25px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9em;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .game-board {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin: 20px 0;
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cell {
+        width: 90px;
+        height: 90px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .cell:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.05);
+    }
+
+    .cell.x {
+        color: #ff6b6b;
+    }
+
+    .cell.o {
+        color: #4ecdc4;
+    }
+
+    .game-info {
+        text-align: center;
+        margin: 20px 0;
+        font-size: 1.1em;
+    }
+
+    .game-controls {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 25px;
+        color: white;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .section {
+        display: none;
+    }
+
+    .section.active {
+        display: block;
+    }
+
+    .shop-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .shop-item {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .shop-item:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .shop-item h3 {
+        margin-bottom: 10px;
+        color: #00ff88;
+    }
+
+    .shop-item p {
+        margin-bottom: 15px;
+        opacity: 0.8;
+    }
+
+    .price {
+        color: #ffd700;
+        font-weight: bold;
+    }
+
+    .settings-grid {
+        display: grid;
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .setting-item {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .toggle {
+        width: 60px;
+        height: 30px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .toggle.active {
+        background: #00ff88;
+    }
+
+    .toggle-slider {
+        width: 24px;
+        height: 24px;
+        background: white;
+        border-radius: 50%;
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        transition: all 0.3s ease;
+    }
+
+    .toggle.active .toggle-slider {
+        left: 33px;
+    }
+
+    .modal {
+        display: none;
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        pointer-events: none;
-        z-index: -1;
-    }
-
-    .floating-particles {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-    }
-
-    .particle {
-        position: absolute;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-        animation: float 20s infinite linear;
-    }
-
-    @keyframes float {
-        0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-        10% { opacity: 1; }
-        90% { opacity: 1; }
-        100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
-    }
-
-    .grid-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: 
-            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-        background-size: 50px 50px;
-        animation: gridMove 30s linear infinite;
-    }
-
-    @keyframes gridMove {
-        0% { transform: translate(0, 0); }
-        100% { transform: translate(50px, 50px); }
-    }
-
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-        position: relative;
-        z-index: 1;
-    }
-
-    .header {
-        text-align: center;
-        margin-bottom: 40px;
-        padding: 40px 0;
-    }
-
-    .header h1 {
-        font-size: 3.5rem;
-        font-weight: 700;
-        background: linear-gradient(45deg, #ffffff, #cccccc);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 15px;
-        text-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
-    }
-
-    .header p {
-        font-size: 1.2rem;
-        color: #aaaaaa;
-        font-weight: 300;
-    }
-
-    .main-content {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 30px;
-        margin-bottom: 40px;
-    }
-
-    .input-section, .output-section {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 15px;
-        padding: 25px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        transition: all 0.3s ease;
-    }
-
-    .input-section:hover, .output-section:hover {
-        border-color: rgba(255, 255, 255, 0.2);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-    }
-
-    .section-title {
-        font-size: 1.4rem;
-        font-weight: 600;
-        margin-bottom: 20px;
-        color: #ffffff;
-        display: flex;
+        background: rgba(0, 0, 0, 0.8);
+        justify-content: center;
         align-items: center;
+        z-index: 1000;
+    }
+
+    .modal.active {
+        display: flex;
+    }
+
+    .modal-content {
+        background: #1a1a1a;
+        padding: 30px;
+        border-radius: 20px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .winner {
+        font-size: 2em;
+        margin-bottom: 20px;
+        color: #00ff88;
+    }
+
+    .music-controls {
+        display: flex;
+        justify-content: center;
         gap: 10px;
+        margin-top: 20px;
     }
 
-    .section-title::before {
-        content: '';
-        width: 4px;
-        height: 20px;
-        background: linear-gradient(45deg, #ffffff, #cccccc);
-        border-radius: 2px;
+    .volume-slider {
+        width: 100px;
+        margin: 0 10px;
     }
 
-    textarea {
-        width: 100%;
-        height: 400px;
-        background: rgba(0, 0, 0, 0.3);
+    .matchmaking {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .matchmaking-status {
+        font-size: 1.2em;
+        margin-bottom: 15px;
+    }
+
+    .searching {
+        color: #ffd700;
+    }
+
+    .matched {
+        color: #00ff88;
+    }
+
+    .player-count {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 0.9em;
         border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+    }
+
+    .online-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: #00ff88;
+        border-radius: 50%;
+        margin-right: 8px;
+        animation: blink 2s infinite;
+    }
+
+    .room-info {
+        background: rgba(255, 255, 255, 0.1);
         border-radius: 10px;
         padding: 15px;
-        color: #ffffff;
-        font-family: 'Courier New', monospace;
-        font-size: 14px;
-        resize: vertical;
-        transition: all 0.3s ease;
+        margin: 15px 0;
+        text-align: center;
     }
 
-    textarea:focus {
-        outline: none;
-        border-color: #ffffff;
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-    }
-
-    textarea::placeholder {
-        color: #888888;
-    }
-
-    .controls {
+    .opponent-info {
         display: flex;
-        gap: 15px;
-        margin-top: 20px;
-        flex-wrap: wrap;
-    }
-
-    .btn {
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 8px;
-        background: linear-gradient(45deg, #ffffff, #e0e0e0);
-        color: #1a1a1a;
-    }
-
-    .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
-    }
-
-    .btn:active {
-        transform: translateY(0);
-    }
-
-    .btn-secondary {
-        background: linear-gradient(45deg, #333333, #555555);
-        color: #ffffff;
-    }
-
-    .status {
-        margin-top: 15px;
-        padding: 10px 15px;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-    }
-
-    .status.success {
-        background: rgba(34, 197, 94, 0.2);
-        border: 1px solid rgba(34, 197, 94, 0.3);
-        color: #4ade80;
-    }
-
-    .status.error {
-        background: rgba(239, 68, 68, 0.2);
-        border: 1px solid rgba(239, 68, 68, 0.3);
-        color: #f87171;
-    }
-
-    .features {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-        margin-top: 40px;
-    }
-
-    .feature-card {
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 12px;
-        padding: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        transition: all 0.3s ease;
-    }
-
-    .feature-card:hover {
-        background: rgba(255, 255, 255, 0.08);
-        transform: translateY(-5px);
-    }
-
-    .feature-card h3 {
-        color: #ffffff;
         margin-bottom: 10px;
-        font-size: 1.1rem;
     }
 
-    .feature-card p {
-        color: #aaaaaa;
-        font-size: 0.9rem;
-        line-height: 1.5;
+    .player-tag {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.8em;
     }
 
-    @media (max-width: 768px) {
-        .main-content {
-            grid-template-columns: 1fr;
-        }
-        
-        .header h1 {
-            font-size: 2.5rem;
-        }
-        
-        .controls {
-            justify-content: center;
-        }
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
     }
 
-    .code-highlight {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-family: 'Courier New', monospace;
+    .pulse {
+        animation: pulse 0.5s ease-in-out;
+    }
+
+    @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0.3; }
+    }
+
+    @keyframes searching {
+        0% { opacity: 0.5; }
+        50% { opacity: 1; }
+        100% { opacity: 0.5; }
+    }
+
+    .searching {
+        animation: searching 1.5s infinite;
     }
 </style>
 ```
 
 </head>
 <body>
-    <div class="background-effects">
-        <div class="grid-overlay"></div>
-        <div class="floating-particles"></div>
-    </div>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">TIC-TAC-TOE</h1>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Coins</div>
+                    <div class="stat-value" id="coins">100</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Wins</div>
+                    <div class="stat-value" id="wins">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Games</div>
+                    <div class="stat-value" id="games">0</div>
+                </div>
+            </div>
+        </div>
 
 ```
-<div class="container">
-    <div class="header">
-        <h1>Lua Decipher</h1>
-        <p>Decode obfuscated Lua code with precision and clarity</p>
+    <div class="navigation">
+        <button class="nav-btn active" onclick="showSection('game')">Game</button>
+        <button class="nav-btn" onclick="showSection('multiplayer')">Multiplayer</button>
+        <button class="nav-btn" onclick="showSection('shop')">Shop</button>
+        <button class="nav-btn" onclick="showSection('settings')">Settings</button>
     </div>
 
-    <div class="main-content">
-        <div class="input-section">
-            <div class="section-title">🔒 Encoded Input</div>
-            <textarea id="encodedInput" placeholder="Paste your obfuscated Lua code here...&#10;&#10;Example:&#10;local g={&quot;\074\121\103\061&quot;;&quot;\099\104\086\080\067\115\061\061&quot;,&quot;\097\107\114\069\088\099\066\068\043\069\117\081\056\071\077\112\104\086\052\087\116\076\047\061&quot;;}"></textarea>
-            <div class="controls">
-                <button class="btn" onclick="decipherCode()">
-                    🔓 Decipher Code
-                </button>
-                <button class="btn btn-secondary" onclick="clearInput()">
-                    🗑️ Clear
-                </button>
-                <button class="btn btn-secondary" onclick="copyOutput()">
-                    📋 Copy Output
-                </button>
+    <div class="section active" id="game">
+        <div class="game-info">
+            <div id="status">Player X's turn</div>
+        </div>
+        <div class="game-board" id="board"></div>
+        <div class="game-controls">
+            <button class="btn" onclick="resetGame()">New Game</button>
+            <button class="btn" onclick="playVsAI()">VS AI</button>
+        </div>
+    </div>
+
+    <div class="section" id="multiplayer">
+        <h2>Multiplayer Mode</h2>
+        <div class="matchmaking">
+            <div class="matchmaking-status" id="matchStatus">Ready to find opponent</div>
+            <button class="btn" id="matchBtn" onclick="startMatchmaking()">Find Match</button>
+            <div class="room-info" id="roomInfo" style="display: none;">
+                <div class="opponent-info">
+                    <span>You: <span class="player-tag" id="yourSymbol">X</span></span>
+                    <span>Opponent: <span class="player-tag" id="opponentSymbol">O</span></span>
+                </div>
+                <div id="opponentName">Opponent: Player2</div>
             </div>
-            <div id="inputStatus" class="status" style="display: none;"></div>
         </div>
-
-        <div class="output-section">
-            <div class="section-title">🔓 Decoded Output</div>
-            <textarea id="decodedOutput" readonly placeholder="Decoded Lua code will appear here..."></textarea>
-            <div id="outputStatus" class="status" style="display: none;"></div>
+        <div class="game-info">
+            <div id="multiplayerStatus">Find a match to start playing!</div>
+        </div>
+        <div class="game-board" id="multiplayerBoard"></div>
+        <div class="game-controls">
+            <button class="btn" onclick="leaveMatch()">Leave Match</button>
+            <button class="btn" onclick="rematch()">Rematch</button>
         </div>
     </div>
 
-    <div class="features">
-        <div class="feature-card">
-            <h3>🎯 Octal Decoding</h3>
-            <p>Automatically converts octal escape sequences like <span class="code-highlight">\074\121\103</span> back to readable characters</p>
+    <div class="section" id="shop">
+        <h2>Shop</h2>
+        <div class="shop-grid">
+            <div class="shop-item">
+                <h3>🎵 Music Pack</h3>
+                <p>Unlock ambient background music</p>
+                <div class="price">50 coins</div>
+                <button class="btn" onclick="buyItem('music', 50)">Buy</button>
+            </div>
+            <div class="shop-item">
+                <h3>🎨 Theme Pack</h3>
+                <p>Unlock color themes</p>
+                <div class="price">75 coins</div>
+                <button class="btn" onclick="buyItem('theme', 75)">Buy</button>
+            </div>
+            <div class="shop-item">
+                <h3>🏆 Double Rewards</h3>
+                <p>2x coins for next 5 wins</p>
+                <div class="price">100 coins</div>
+                <button class="btn" onclick="buyItem('double', 100)">Buy</button>
+            </div>
         </div>
-        <div class="feature-card">
-            <h3>🔍 String Analysis</h3>
-            <p>Identifies and processes encoded string literals commonly used in Lua obfuscation</p>
+    </div>
+
+    <div class="section" id="settings">
+        <h2>Settings</h2>
+        <div class="settings-grid">
+            <div class="setting-item">
+                <span>Sound Effects</span>
+                <div class="toggle active" onclick="toggleSetting('sound')">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+            <div class="setting-item">
+                <span>Background Music</span>
+                <div class="toggle" onclick="toggleSetting('music')">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+            <div class="setting-item">
+                <span>Animations</span>
+                <div class="toggle active" onclick="toggleSetting('animations')">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
         </div>
-        <div class="feature-card">
-            <h3>⚡ Real-time Processing</h3>
-            <p>Instant decoding with visual feedback and error handling for malformed code</p>
-        </div>
-        <div class="feature-card">
-            <h3>🛡️ Safe Execution</h3>
-            <p>Decodes without executing potentially harmful code, ensuring security</p>
+        <div class="music-controls">
+            <span>Volume:</span>
+            <input type="range" class="volume-slider" min="0" max="100" value="50" onchange="setVolume(this.value)">
         </div>
     </div>
 </div>
 
+<div class="player-count">
+    <span class="online-indicator"></span>
+    <span id="playerCount">247</span> players online
+</div>
+
+<div class="modal" id="gameModal">
+    <div class="modal-content">
+        <div class="winner" id="modalText"></div>
+        <button class="btn" onclick="closeModal()">Continue</button>
+    </div>
+</div>
+
 <script>
-    // Create floating particles
-    function createParticles() {
-        const particlesContainer = document.querySelector('.floating-particles');
+    let board = ['', '', '', '', '', '', '', '', ''];
+    let currentPlayer = 'X';
+    let gameActive = true;
+    let vsAI = false;
+    let isMultiplayer = false;
+    let isMatchmaking = false;
+    let mySymbol = 'X';
+    let opponentSymbol = 'O';
+    let matchmakingTimer;
+    let multiplayerBoard = ['', '', '', '', '', '', '', '', ''];
+    let gameData = {
+        coins: 100,
+        wins: 0,
+        games: 0,
+        settings: {
+            sound: true,
+            music: false,
+            animations: true
+        },
+        purchases: {
+            music: false,
+            theme: false,
+            double: 0
+        }
+    };
+
+    // Simulate online players
+    function updatePlayerCount() {
+        const baseCount = 247;
+        const variation = Math.floor(Math.random() * 20) - 10;
+        const count = baseCount + variation;
+        document.getElementById('playerCount').textContent = count;
+    }
+
+    function initGame() {
+        const gameBoard = document.getElementById('board');
+        gameBoard.innerHTML = '';
         
-        for (let i = 0; i < 50; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.width = Math.random() * 4 + 2 + 'px';
-            particle.style.height = particle.style.width;
-            particle.style.animationDelay = Math.random() * 20 + 's';
-            particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
-            particlesContainer.appendChild(particle);
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.onclick = () => makeMove(i);
+            gameBoard.appendChild(cell);
+        }
+        
+        initMultiplayerBoard();
+        updateStats();
+        updatePlayerCount();
+        setInterval(updatePlayerCount, 15000);
+    }
+
+    function initMultiplayerBoard() {
+        const multiplayerGameBoard = document.getElementById('multiplayerBoard');
+        multiplayerGameBoard.innerHTML = '';
+        
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.onclick = () => makeMultiplayerMove(i);
+            multiplayerGameBoard.appendChild(cell);
         }
     }
 
-    // Decipher function
-    function decipherCode() {
-        const input = document.getElementById('encodedInput').value;
-        const outputEl = document.getElementById('decodedOutput');
-        const statusEl = document.getElementById('outputStatus');
+    function startMatchmaking() {
+        isMatchmaking = true;
+        document.getElementById('matchStatus').textContent = 'Searching for opponent...';
+        document.getElementById('matchStatus').className = 'matchmaking-status searching';
+        document.getElementById('matchBtn').textContent = 'Cancel';
+        document.getElementById('matchBtn').onclick = cancelMatchmaking;
         
-        if (!input.trim()) {
-            showStatus('Please enter some code to decipher', 'error');
+        // Simulate matchmaking
+        matchmakingTimer = setTimeout(() => {
+            foundMatch();
+        }, Math.random() * 3000 + 2000);
+    }
+
+    function cancelMatchmaking() {
+        isMatchmaking = false;
+        clearTimeout(matchmakingTimer);
+        document.getElementById('matchStatus').textContent = 'Ready to find opponent';
+        document.getElementById('matchStatus').className = 'matchmaking-status';
+        document.getElementById('matchBtn').textContent = 'Find Match';
+        document.getElementById('matchBtn').onclick = startMatchmaking;
+        document.getElementById('roomInfo').style.display = 'none';
+    }
+
+    function foundMatch() {
+        isMatchmaking = false;
+        isMultiplayer = true;
+        
+        // Randomly assign symbols
+        if (Math.random() < 0.5) {
+            mySymbol = 'X';
+            opponentSymbol = 'O';
+        } else {
+            mySymbol = 'O';
+            opponentSymbol = 'X';
+        }
+        
+        document.getElementById('matchStatus').textContent = 'Match found!';
+        document.getElementById('matchStatus').className = 'matchmaking-status matched';
+        document.getElementById('matchBtn').textContent = 'In Game';
+        document.getElementById('matchBtn').disabled = true;
+        
+        document.getElementById('yourSymbol').textContent = mySymbol;
+        document.getElementById('opponentSymbol').textContent = opponentSymbol;
+        document.getElementById('roomInfo').style.display = 'block';
+        
+        // Generate random opponent name
+        const names = ['Player2', 'GamerX', 'TicTacPro', 'Champion', 'Master', 'Ninja', 'Warrior'];
+        document.getElementById('opponentName').textContent = 'Opponent: ' + names[Math.floor(Math.random() * names.length)];
+        
+        resetMultiplayerGame();
+    }
+
+    function makeMultiplayerMove(index) {
+        if (!isMultiplayer || multiplayerBoard[index] || !gameActive) return;
+        if (currentPlayer !== mySymbol) return;
+        
+        multiplayerBoard[index] = currentPlayer;
+        updateMultiplayerBoard();
+        
+        if (checkMultiplayerWinner()) {
+            endMultiplayerGame(currentPlayer);
             return;
         }
-
-        try {
-            let decoded = input;
-            
-            // Decode octal escape sequences
-            decoded = decoded.replace(/\\([0-7]{3})/g, (match, octal) => {
-                return String.fromCharCode(parseInt(octal, 8));
-            });
-            
-            // Additional decoding for common Lua obfuscation patterns
-            decoded = decoded.replace(/\\x([0-9A-Fa-f]{2})/g, (match, hex) => {
-                return String.fromCharCode(parseInt(hex, 16));
-            });
-            
-            // Decode Unicode escape sequences
-            decoded = decoded.replace(/\\u([0-9A-Fa-f]{4})/g, (match, unicode) => {
-                return String.fromCharCode(parseInt(unicode, 16));
-            });
-            
-            // Handle common string concatenation patterns
-            decoded = decoded.replace(/"..""/g, '');
-            
-            // Format the output for better readability
-            decoded = formatLuaCode(decoded);
-            
-            outputEl.value = decoded;
-            showStatus('Code successfully deciphered!', 'success');
-            
-        } catch (error) {
-            showStatus('Error deciphering code: ' + error.message, 'error');
+        
+        if (multiplayerBoard.every(cell => cell)) {
+            endMultiplayerGame('tie');
+            return;
+        }
+        
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        updateMultiplayerStatus();
+        
+        // Simulate opponent move
+        if (currentPlayer === opponentSymbol) {
+            setTimeout(() => {
+                const emptyCells = multiplayerBoard.map((cell, index) => cell === '' ? index : null).filter(val => val !== null);
+                if (emptyCells.length > 0) {
+                    const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                    makeMultiplayerMove(randomIndex);
+                }
+            }, Math.random() * 2000 + 500);
         }
     }
 
-    // Format Lua code for better readability
-    function formatLuaCode(code) {
-        // Basic formatting - add proper indentation and line breaks
-        let formatted = code;
-        
-        // Add line breaks after semicolons
-        formatted = formatted.replace(/;/g, ';\n');
-        
-        // Add line breaks after braces
-        formatted = formatted.replace(/\{/g, '{\n');
-        formatted = formatted.replace(/\}/g, '\n}');
-        
-        // Clean up multiple newlines
-        formatted = formatted.replace(/\n\s*\n/g, '\n');
-        
-        // Basic indentation
-        const lines = formatted.split('\n');
-        let indentLevel = 0;
-        const indentedLines = lines.map(line => {
-            const trimmed = line.trim();
-            if (trimmed.includes('}')) indentLevel--;
-            const indented = '  '.repeat(Math.max(0, indentLevel)) + trimmed;
-            if (trimmed.includes('{')) indentLevel++;
-            return indented;
+    function updateMultiplayerBoard() {
+        const cells = document.querySelectorAll('#multiplayerBoard .cell');
+        cells.forEach((cell, index) => {
+            cell.textContent = multiplayerBoard[index];
+            cell.className = `cell ${multiplayerBoard[index].toLowerCase()}`;
+            if (gameData.settings.animations) {
+                cell.classList.add('pulse');
+                setTimeout(() => cell.classList.remove('pulse'), 500);
+            }
         });
+    }
+
+    function checkMultiplayerWinner() {
+        const winPatterns = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
         
-        return indentedLines.join('\n');
+        return winPatterns.some(pattern => {
+            const [a, b, c] = pattern;
+            return multiplayerBoard[a] && multiplayerBoard[a] === multiplayerBoard[b] && multiplayerBoard[a] === multiplayerBoard[c];
+        });
     }
 
-    // Show status message
-    function showStatus(message, type) {
-        const statusEl = document.getElementById('outputStatus');
-        statusEl.textContent = message;
-        statusEl.className = `status ${type}`;
-        statusEl.style.display = 'block';
+    function endMultiplayerGame(result) {
+        gameActive = false;
+        gameData.games++;
         
-        setTimeout(() => {
-            statusEl.style.display = 'none';
-        }, 5000);
-    }
-
-    // Clear input
-    function clearInput() {
-        document.getElementById('encodedInput').value = '';
-        document.getElementById('decodedOutput').value = '';
-        document.getElementById('outputStatus').style.display = 'none';
-    }
-
-    // Copy output to clipboard
-    function copyOutput() {
-        const output = document.getElementById('decodedOutput');
-        if (output.value) {
-            output.select();
-            document.execCommand('copy');
-            showStatus('Output copied to clipboard!', 'success');
+        let message = '';
+        if (result === 'tie') {
+            message = "It's a tie!";
+            gameData.coins += 5;
         } else {
-            showStatus('No output to copy', 'error');
+            if (result === mySymbol) {
+                message = "You won!";
+                gameData.wins++;
+                gameData.coins += gameData.purchases.double > 0 ? 20 : 10;
+                if (gameData.purchases.double > 0) gameData.purchases.double--;
+            } else {
+                message = "You lost!";
+                gameData.coins += 2;
+            }
+        }
+        
+        updateStats();
+        showModal(message);
+    }
+
+    function updateMultiplayerStatus() {
+        const status = document.getElementById('multiplayerStatus');
+        if (currentPlayer === mySymbol) {
+            status.textContent = "Your turn";
+            status.style.color = '#00ff88';
+        } else {
+            status.textContent = "Opponent's turn";
+            status.style.color = '#ffd700';
         }
     }
 
-    // Initialize particles on page load
-    window.addEventListener('load', createParticles);
+    function resetMultiplayerGame() {
+        multiplayerBoard = ['', '', '', '', '', '', '', '', ''];
+        currentPlayer = 'X';
+        gameActive = true;
+        updateMultiplayerBoard();
+        updateMultiplayerStatus();
+    }
 
-    // Auto-resize textareas
-    document.querySelectorAll('textarea').forEach(textarea => {
-        textarea.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = this.scrollHeight + 'px';
+    function leaveMatch() {
+        isMultiplayer = false;
+        gameActive = false;
+        document.getElementById('matchStatus').textContent = 'Ready to find opponent';
+        document.getElementById('matchStatus').className = 'matchmaking-status';
+        document.getElementById('matchBtn').textContent = 'Find Match';
+        document.getElementById('matchBtn').disabled = false;
+        document.getElementById('matchBtn').onclick = startMatchmaking;
+        document.getElementById('roomInfo').style.display = 'none';
+        document.getElementById('multiplayerStatus').textContent = 'Find a match to start playing!';
+    }
+
+    function rematch() {
+        if (isMultiplayer) {
+            resetMultiplayerGame();
+            showModal('Rematch started!');
+        }
+    }
+
+    function initGame() {
+        const gameBoard = document.getElementById('board');
+        gameBoard.innerHTML = '';
+        
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.onclick = () => makeMove(i);
+            gameBoard.appendChild(cell);
+        }
+        
+        updateStats();
+    }
+
+    function makeMove(index) {
+        if (board[index] || !gameActive) return;
+        
+        board[index] = currentPlayer;
+        updateBoard();
+        
+        if (checkWinner()) {
+            endGame(currentPlayer);
+            return;
+        }
+        
+        if (board.every(cell => cell)) {
+            endGame('tie');
+            return;
+        }
+        
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        updateStatus();
+        
+        if (vsAI && currentPlayer === 'O') {
+            setTimeout(aiMove, 500);
+        }
+    }
+
+    function aiMove() {
+        const emptyCells = board.map((cell, index) => cell === '' ? index : null).filter(val => val !== null);
+        const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        makeMove(randomIndex);
+    }
+
+    function updateBoard() {
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach((cell, index) => {
+            cell.textContent = board[index];
+            cell.className = `cell ${board[index].toLowerCase()}`;
+            if (gameData.settings.animations) {
+                cell.classList.add('pulse');
+                setTimeout(() => cell.classList.remove('pulse'), 500);
+            }
         });
-    });
+    }
+
+    function checkWinner() {
+        const winPatterns = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+        
+        return winPatterns.some(pattern => {
+            const [a, b, c] = pattern;
+            return board[a] && board[a] === board[b] && board[a] === board[c];
+        });
+    }
+
+    function endGame(result) {
+        gameActive = false;
+        gameData.games++;
+        
+        let message = '';
+        if (result === 'tie') {
+            message = "It's a tie!";
+            gameData.coins += 5;
+        } else {
+            if (result === 'X') {
+                message = "Player X wins!";
+                gameData.wins++;
+                gameData.coins += gameData.purchases.double > 0 ? 20 : 10;
+                if (gameData.purchases.double > 0) gameData.purchases.double--;
+            } else {
+                message = "Player O wins!";
+                if (!vsAI) {
+                    gameData.wins++;
+                    gameData.coins += gameData.purchases.double > 0 ? 20 : 10;
+                    if (gameData.purchases.double > 0) gameData.purchases.double--;
+                }
+            }
+        }
+        
+        updateStats();
+        showModal(message);
+    }
+
+    function resetGame() {
+        board = ['', '', '', '', '', '', '', '', ''];
+        currentPlayer = 'X';
+        gameActive = true;
+        vsAI = false;
+        updateBoard();
+        updateStatus();
+    }
+
+    function playVsAI() {
+        resetGame();
+        vsAI = true;
+        updateStatus();
+    }
+
+    function updateStatus() {
+        const status = document.getElementById('status');
+        if (vsAI) {
+            status.textContent = currentPlayer === 'X' ? "Your turn" : "AI's turn";
+        } else {
+            status.textContent = `Player ${currentPlayer}'s turn`;
+        }
+    }
+
+    function updateStats() {
+        document.getElementById('coins').textContent = gameData.coins;
+        document.getElementById('wins').textContent = gameData.wins;
+        document.getElementById('games').textContent = gameData.games;
+    }
+
+    function showSection(section) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(section).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function buyItem(item, cost) {
+        if (gameData.coins >= cost) {
+            gameData.coins -= cost;
+            
+            if (item === 'music') {
+                gameData.purchases.music = true;
+                alert('Music pack unlocked!');
+            } else if (item === 'theme') {
+                gameData.purchases.theme = true;
+                alert('Theme pack unlocked!');
+            } else if (item === 'double') {
+                gameData.purchases.double = 5;
+                alert('Double rewards activated for 5 wins!');
+            }
+            
+            updateStats();
+        } else {
+            alert('Not enough coins!');
+        }
+    }
+
+    function toggleSetting(setting) {
+        gameData.settings[setting] = !gameData.settings[setting];
+        event.target.classList.toggle('active');
+    }
+
+    function setVolume(value) {
+        // Volume control placeholder
+        console.log('Volume set to:', value);
+    }
+
+    function showModal(message) {
+        document.getElementById('modalText').textContent = message;
+        document.getElementById('gameModal').classList.add('active');
+    }
+
+    function closeModal() {
+        document.getElementById('gameModal').classList.remove('active');
+    }
+
+    // Initialize game
+    initGame();
 </script>
 ```
 
